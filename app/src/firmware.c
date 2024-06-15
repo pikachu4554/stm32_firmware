@@ -1,11 +1,13 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/cm3/scb.h>
 
 #include "core/system.h"
 #include "core/timer.h"
 
 #define LED_PORT (GPIOD)
 #define LED_PIN (GPIO12)
+#define BOOTLOADER_SIZE (0x8000U)
 
 static void self_gpio_setup(void){
     rcc_periph_clock_enable(RCC_GPIOD);
@@ -13,7 +15,12 @@ static void self_gpio_setup(void){
     gpio_set_af(LED_PORT, GPIO_AF2,LED_PIN);
 }
 
+static void vector_setup(void){
+    SCB_VTOR = BOOTLOADER_SIZE;
+}
+
 int main(void){
+    vector_setup(); //offset the vector table for this application
     system_setup(); //rcc and systick config in core/system.c
     self_gpio_setup(); 
     self_timer_setup();
