@@ -3,7 +3,7 @@
 #include <libopencm3/cm3/scb.h>
 
 #include "core/system.h"
-#include "core/timer.h"
+#include "timer.h"
 
 #define LED_PORT (GPIOD)
 #define LED_PIN (GPIO12)

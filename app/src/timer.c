@@ -1,7 +1,7 @@
 #include <libopencm3/stm32/timer.h>
 #include <libopencm3/stm32/rcc.h>
 
-#include "core/timer.h"
+#include "timer.h"
 
 // freq = sys_freq / ((prescaler-1)*(ARR-1))
 //aiming at 1000 steps and 1000Hz. based on some cals, we will get approx this target due to the -1 in the formula

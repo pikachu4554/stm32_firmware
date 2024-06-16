@@ -39,8 +39,6 @@ SECTIONS
 
 		*(.vectors)	/* Vector table */
 		. = ALIGN(16);
-
-
 		*(.text*)	/* Program code */
 		. = ALIGN(4);
 		*(.rodata*)	/* Read-only data */
