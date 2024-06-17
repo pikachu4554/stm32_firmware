@@ -52,6 +52,9 @@ int main(void){
             uint8_t data = uart_read_byte();
             uart_write_byte(data+1);
         }
+
+        //with the below line, we can clearly see the delay in response and the data loss due to small buffer and the racce condition
+        //system_delay(1000); //simulates higher workload. Even the brightnening and dimming is effected here
     }
     return 0;
 }

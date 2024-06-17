@@ -3,33 +3,21 @@
 #include <libopencm3/cm3/nvic.h>
 
 #include "core/uart.h"
-#include "core/ring_buffer.h"
 
-//lenght calculation  => (actual_baud_rate/program_latenecy) here: 11520/1000 = 11.52
-//for a 10ms latency, then 115.2 size buffer
-//actual baud rate is the number of bytes other than overhead bytes in data transfer
-#define RING_BUFFER_SIZE (128)
-
-static ring_buffer_t ring_buffer = {0U};
-static uint8_t data_buffer[RING_BUFFER_SIZE] = {0U};
+static uint8_t data_buffer = 0U;
+static bool data_available = false;
 
 void usart2_isr(void){
     const bool overrun_occured = usart_get_flag(USART2, USART_FLAG_ORE) == 1;
     const bool received_data = usart_get_flag(USART2, USART_FLAG_RXNE) == 1;
 
     if(received_data || overrun_occured){
-
-        if( ring_buffer_write(&ring_buffer, (uint8_t)usart_recv(USART2)) ){
-            //handle failuire??
-        }
-
+        data_buffer = (uint8_t)usart_recv(USART2);
+        data_available = true;
     }
 }
 
 void uart_setup(void){
-
-    //setup ring buffer
-    ring_buffer_setup(&ring_buffer, data_buffer, RING_BUFFER_SIZE);
 
     //clock setup
     rcc_periph_clock_enable(RCC_USART2);
@@ -62,26 +50,20 @@ void uart_write_byte(uint8_t data){
 }
 
 uint32_t uart_read(uint8_t *data, const uint32_t length){
-    if(length == 0){ //if this was >, then the this function gets discarded
-        return 0;
+    if(length>0 && data_available){
+        *data = data_buffer;
+        data_available = false;
+        return 1;
     }
-
-    for(uint32_t i = 0;i<length;i++){
-        if(  !(  ring_buffer_read(&ring_buffer,&data[i])  )  ){
-            return i; //number of bytes actually read
-        }
-    } 
-
-    return length;
+    return 0;
 }
 
 uint8_t uart_read_byte(void){
-    uint8_t byte =0;
-    (void)uart_read(&byte, 1);
-    return byte;
+    data_available = false; //what if new data comes in now?
+    return data_buffer;
 }
 
 bool uart_data_available(void){
-    return !(ring_buffer_empty(&ring_buffer));
+    return data_available;
 }
 

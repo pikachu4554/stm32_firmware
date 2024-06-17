@@ -39,3 +39,10 @@ void system_setup(void){
     self_rcc_setup();
     self_systick_setup();
 }
+
+void system_delay(uint64_t milliseconds){
+    uint64_t end_time = system_get_ticks() + milliseconds;
+    while(system_get_ticks() < end_time){
+        // don't need to add nop as ticks is volatile
+    }
+}
