@@ -12,29 +12,29 @@
 void self_timer_setup(void){
     
     //enable timer
-    rcc_periph_clock_enable(RCC_TIM4); //TIM4 as it is according to the datasheet
+    rcc_periph_clock_enable(RCC_TIM2); //TIM4 as it is according to the datasheet
 
     //set up timer properties like clock division, alignment, counter count direction, 
-    timer_set_mode(TIM4,TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
+    timer_set_mode(TIM2,TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
 
     //configure timer for PWM. set the channel and the mode for channel.
-    timer_set_oc_mode(TIM4,TIM_OC1, TIM_OCM_PWM1); //channel1 for PD12 according to chip datasheet
+    timer_set_oc_mode(TIM2,TIM_OC1, TIM_OCM_PWM1); //channel1 for PD12 according to chip datasheet
 
     //enable timer counter to start counting
-    timer_enable_counter(TIM4);
+    timer_enable_counter(TIM2);
 
     //enable output compare for channel
-    timer_enable_oc_output(TIM4, TIM_OC1);
+    timer_enable_oc_output(TIM2, TIM_OC1);
 
     //setup frequency and resolution
-    timer_set_prescaler(TIM4, PRESCALER - 1);
-    timer_set_period(TIM4, ARR_VALUE - 1);
+    timer_set_prescaler(TIM2, PRESCALER - 1);
+    timer_set_period(TIM2, ARR_VALUE - 1);
 }
 
 void timer_pwm_set_duty_cycle(float duty_cycle){  //b/w 1 and 100
 //duty cycle = ccr/arr * 100
 
 const float raw_value = (float)ARR_VALUE*(duty_cycle/100.0f);
-timer_set_oc_value(TIM4, TIM_OC1, (uint32_t)raw_value); //will lose accuracy here tho
+timer_set_oc_value(TIM2, TIM_OC1, (uint32_t)raw_value); //will lose accuracy here tho
 
 }

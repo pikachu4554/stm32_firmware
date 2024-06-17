@@ -17,6 +17,7 @@
     "gpio.h": "c",
     "common.h": "c",
     "nvic.h": "c",
-    "memorymap.h": "c"
+    "memorymap.h": "c",
+    "usart_common_f24.h": "c"
   }
 }
