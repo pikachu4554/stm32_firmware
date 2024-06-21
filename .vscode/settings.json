@@ -18,6 +18,7 @@
     "common.h": "c",
     "nvic.h": "c",
     "memorymap.h": "c",
-    "usart_common_f24.h": "c"
+    "usart_common_f24.h": "c",
+    "common-defines.h": "c"
   }
 }
