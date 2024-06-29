@@ -1,3 +1,4 @@
+#include <string.h>
 #include "core/uart.h"
 #include "comms_packet.h"
 #include "core/crc8.h"
@@ -23,7 +24,7 @@ static uint32_t packet_buffer_read_index = 0;
 static uint32_t packet_buffer_write_index = 0;
 static uint32_t packet_buffer_mask = PACKET_BUFFER_LENGTH -1;
 
-static bool packet_is_single_byte(const comms_packet_t* packet, uint8_t byte){
+bool packet_is_single_byte(const comms_packet_t* packet, uint8_t byte){
     if(packet->length !=1 ){
         return false;
     }
@@ -39,6 +40,13 @@ static bool packet_is_single_byte(const comms_packet_t* packet, uint8_t byte){
     }
 
     return true;
+}
+
+void comms_create_single_byte_packet(comms_packet_t* packet, uint8_t byte){
+    memset(packet, 0xff, sizeof(comms_packet_t));
+    packet->length = 1;
+    packet->data[0] = byte;
+    packet->crc = comms_compute_crc(packet);  //this was one source of error
 }
 
 //an implementation of memcopy()
